@@ -33,7 +33,7 @@
 
 **关键点**
 + 62进制的短域名：使用62个字符[A-Z,a-z,0-9]来保存长度为n的短域名。7位的62进制数可以保存3万5千亿个域名，可以满足需求。
-+ 短域名格式，采用如 http://c3.cn/<alias_hash> 格式，其中，alias_hash 是一个固定长度的字符串。alias_hash 作为每一个映射的id，需要维护一个 <ID, url> 的关系。
++ 短域名格式，采用如 c3.cn/<alias_hash> 格式，其中，alias_hash 是一个固定长度的字符串。alias_hash 作为每一个映射的id，需要维护一个 <ID, url> 的关系。
 + id生成方式：
    - 关系数据库自增id，如mysql；
    - redis INCR自增生成id；
