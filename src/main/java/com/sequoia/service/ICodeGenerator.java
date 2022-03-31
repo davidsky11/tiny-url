@@ -8,8 +8,6 @@ package com.sequoia.service;
  */
 public interface ICodeGenerator {
 
-    public String nextCode();
-
-    public String nextCode(int bizId);
+    String generateTinyCode(String originUrl);
 
 }

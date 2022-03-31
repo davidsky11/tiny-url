@@ -1,5 +1,7 @@
 package com.sequoia.infrastructure.service.impl;
 
+import com.sequoia.infrastructure.util.HexUtil;
+import com.sequoia.infrastructure.util.SnowflakeIdWorker;
 import com.sequoia.service.ICodeGenerator;
 import org.springframework.stereotype.Component;
 
@@ -12,15 +14,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class CodeGenerator implements ICodeGenerator {
 
+    /**
+     * 雪花算法 生成
+     *  第一位为校验位 + 七位62进制数
+     * @param originUrl
+     * @return
+     */
     @Override
-    public String nextCode() {
-        return null;
+    public String generateTinyCode(String originUrl) {
+        // 控制在 40 位，对应的 62进制数在7位
+        long number = 0xffffffffffL & SnowflakeIdWorker.nextId();
+        String originCode = HexUtil.hex10To62(number);
+        // 第一位设置为 校验位
+        return HexUtil.getCheckCode(originCode) + originCode;
     }
-
-    @Override
-    public String nextCode(int bizId) {
-        return null;
-    }
-
 
 }

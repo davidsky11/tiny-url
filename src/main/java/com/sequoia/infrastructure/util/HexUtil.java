@@ -1,24 +1,29 @@
 package com.sequoia.infrastructure.util;
 
+import com.sequoia.infrastructure.common.exception.TinyCodeException;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * HexUtil：进制转换工具类
  *
  * @author KVLT
  * @date 2022-03-30.
  */
+@Slf4j
 public class HexUtil {
 
     /**
      * 62进制可用的字符串(26小写+26大写+10数字)
      */
     private static final String BASE_DIGITS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final char[] BASE_DIGITS_ARR = BASE_DIGITS.toCharArray();
     private static final int BASE = BASE_DIGITS.length();
 
     /**
      * 通过余数获取对应的64进制表示
      */
     private static final char[] DIGITS_CHAR = BASE_DIGITS.toCharArray();
+
+    private static int checkNum = 10;
 
     /**
      * 这里预留了足够的空位122位
@@ -63,20 +68,6 @@ public class HexUtil {
      */
     public static String hex10To62(long number) {
         return hexByBase(number, BASE);
-//        if (number < 0)
-//            System.out.println("Number(Base64) must be positive: " + number);
-//        if (number == 0) {
-//            return "0";
-//        }
-//        StringBuilder buf = new StringBuilder();
-//        while (number != 0) {
-//            //获取余数
-//            buf.append(DIGITS_CHAR[(int) (number % BASE)]);
-//            //剩下的值
-//            number /= BASE;
-//        }
-//        //反转
-//        return buf.reverse().toString();
     }
 
     private static String hexByBase(long origin, int base) {
@@ -90,10 +81,10 @@ public class HexUtil {
         char[] buf = new char[32];
         int charPos = 32;
         while ((num / base) > 0) {
-            buf[--charPos] = BASE_DIGITS_ARR[(int)(num % base)];
+            buf[--charPos] = DIGITS_CHAR[(int)(num % base)];
             num /= base;
         }
-        buf[--charPos] = BASE_DIGITS_ARR[(int)(num % base)];
+        buf[--charPos] = DIGITS_CHAR[(int)(num % base)];
         return new String(buf, charPos, (32 - charPos));
     }
 
@@ -101,21 +92,36 @@ public class HexUtil {
     private static int getIndex(String s, int pos) {
         char c = s.charAt(pos);
         if (c > FAST_SIZE) {
-            System.out.println("Unknow character for Base64: " + s);
+            log.error("Unknow character for Base64: {}", s);
+            throw new TinyCodeException("短链接中含有非法字符");
         }
-        int index = DIGITS_INDEX[c];
-        if (index == -1) {
-            System.out.println("Unknow character for Base64: " + s);
-        }
-        return index;
+        return DIGITS_INDEX[c];
     }
 
-    public static void main(String[] args) {
-        long l = 866002477056L;
-        String str = hex10To62(l);
-        System.out.println(str);
-        Long g = hex62To10(str);
-        System.out.println(g);
+    /**
+     * 计算校验位
+     * @param code
+     * @return
+     */
+    public static char getCheckCode(String code) {
+        long unm = toNum(code)+ checkNum;
+        int a = (int) (unm%62);
+        return DIGITS_CHAR[a];
+    }
+
+    /**
+     * 字符串转数字
+     * @param s
+     * @return
+     */
+    private static long toNum(String s) {
+        int a = s.length()-1;
+        long val=0;
+        for(int i=a;i>=0;i--){
+            char c = s.charAt(i);
+            val += (BASE_DIGITS.indexOf(c)*Math.pow(BASE, a-i));
+        }
+        return val;
     }
 
 }
