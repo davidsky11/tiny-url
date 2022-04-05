@@ -1,6 +1,5 @@
 package com.sequoia.infrastructure.service.impl;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.*;
 import com.google.common.util.concurrent.Striped;
 import com.sequoia.infrastructure.common.ProducerPromise;
@@ -38,7 +37,7 @@ public class TinyUrlStore implements ITinyUrlStore {
     /**
      * 基于 key 级别的锁
      */
-    private static final Striped<Lock> stripedKeyLock = Striped.lock(127);
+    private static final Striped<Lock> stripedKeyLock = Striped.lock(255);
     private static final int LOCK_TIMEOUT = 1000;
     private static final TimeUnit LOCK_TIMEOUT_TIMEUNIT = TimeUnit.MILLISECONDS;
 
@@ -79,7 +78,12 @@ public class TinyUrlStore implements ITinyUrlStore {
         return TINY_ORIGIN_STORE.getIfPresent(tinyCode);
     }
 
-    @VisibleForTesting
+    private boolean putOriginUrl(String tinyCode, String originUrl) {
+        if (null == tinyCode) { return false; }
+        TINY_ORIGIN_STORE.put(tinyCode, originUrl);
+        return true;
+    }
+
     public Lock getLock(String tinyCode) {
         return stripedKeyLock.get(tinyCode);
     }
@@ -99,10 +103,9 @@ public class TinyUrlStore implements ITinyUrlStore {
                 return false;
             }
 
-            String storeOriginUrl = getOriginUrl(tinyCode);
+            String storeOriginUrl = this.getOriginUrl(tinyCode);
             if (null == storeOriginUrl) {
-                TINY_ORIGIN_STORE.put(tinyCode, originUrl);
-                return true;
+                return putOriginUrl(tinyCode, originUrl);
             } else {
                 return StringUtils.equals(storeOriginUrl, originUrl);
             }
@@ -122,31 +125,37 @@ public class TinyUrlStore implements ITinyUrlStore {
      * @return
      */
     private CompletableFuture<String> generateTinyCodeFuture(String originUrl) {
-        return CompletableFuture.completedFuture(originUrl).thenApply(url -> {
-            // 根据originUrl生成对应的短码
-            String tinyCode = codeGenerator.generateTinyCode(originUrl);
+        return CompletableFuture.completedFuture(originUrl).thenApply(this::generateTinyCode);
+    }
 
-            String storeOriginUrl = this.getOriginUrl(tinyCode);
-            if (null == storeOriginUrl) {
-                if (saveTinyOriginCodeMapping(tinyCode, originUrl)) {
-                    return tinyCode;
-                }
-            }
+    private String tinyCode(String originUrl) {
+        return codeGenerator.generateTinyCode(originUrl);
+    }
 
-            if (StringUtils.equals(originUrl, storeOriginUrl)) {
+    private String generateTinyCode(String originUrl) {
+        // 根据originUrl生成对应的短码
+        String tinyCode = this.tinyCode(originUrl);
+
+        String storeOriginUrl = this.getOriginUrl(tinyCode);
+        if (null == storeOriginUrl) {
+            if (saveTinyOriginCodeMapping(tinyCode, originUrl)) {
                 return tinyCode;
             }
+        }
 
-            for (Integer i = 1; i <= generateMaxCount; i++) {
-                tinyCode = codeGenerator.generateTinyCode(originUrl);
-                if (saveTinyOriginCodeMapping(tinyCode, originUrl)) {
-                    return tinyCode;
-                }
+        if (StringUtils.equals(originUrl, storeOriginUrl)) {
+            return tinyCode;
+        }
+
+        for (Integer i = 1; i <= generateMaxCount; i++) {
+            tinyCode = this.tinyCode(originUrl);
+            if (saveTinyOriginCodeMapping(tinyCode, originUrl)) {
+                return tinyCode;
             }
+        }
 
-            log.error("hash冲突，已连续生成 {} 次", generateMaxCount);
-            throw new TinyCodeException("hash冲突，已连续生成 " + generateMaxCount + " 次");
-        });
+        log.error("hash冲突，已连续生成 {} 次", generateMaxCount);
+        throw new TinyCodeException("hash冲突，已连续生成 " + generateMaxCount + " 次");
     }
 
     @Override
@@ -171,7 +180,7 @@ public class TinyUrlStore implements ITinyUrlStore {
 
     @Override
     public CompletableFuture<String> getOriginUrlFuture(String tinyCode) {
-        return CompletableFuture.completedFuture(getOriginUrl(tinyCode));
+        return CompletableFuture.completedFuture(this.getOriginUrl(tinyCode));
     }
 
 }

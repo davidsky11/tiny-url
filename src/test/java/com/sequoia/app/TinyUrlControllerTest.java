@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import com.sequoia.domain.UrlRequest;
 import com.sequoia.infrastructure.common.ApiResult;
 import com.sequoia.infrastructure.common.StatusCodeEnum;
-import com.sequoia.service.ITinyUrlService;
 import com.sequoia.service.impl.TinyUrlService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -12,10 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
@@ -98,7 +99,7 @@ public class TinyUrlControllerTest {
         ApiResult<String> result = tinyUrlController.getOriginUrl(new UrlRequest("seq.com"));
         Assertions.assertEquals(StatusCodeEnum.OK.getCode(), result.getCode());
 
-        result = tinyUrlController.getOriginUrl(new UrlRequest(null));
+        result = tinyUrlController.getOriginUrl(new UrlRequest());
         Assertions.assertEquals(StatusCodeEnum.PARAM_ERROR.getCode(), result.getCode());
 
         result = tinyUrlController.getOriginUrl(null);

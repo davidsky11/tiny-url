@@ -6,11 +6,13 @@ import com.sequoia.infrastructure.common.StatusCodeEnum;
 import com.sequoia.service.ITinyUrlService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import javax.annotation.Resource;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +45,7 @@ public class TinyUrlController {
             return ApiResult.error(StatusCodeEnum.PARAM_ERROR);
         }
 
+//        return ApiResult.ok("test");
         try {
             return tinyUrlService.getTinyUrl(urlRequest.getUrl())
                     .thenApply(tinyCode -> ApiResult.ok(tinyUrlPrefix + tinyCode))
@@ -75,6 +78,11 @@ public class TinyUrlController {
             log.error("getOriginUrl请求异常, {}", urlRequest, e);
             return ApiResult.error(StatusCodeEnum.SERVE_ERROR);
         }
+    }
+
+    @PostMapping("/test")
+    public String test() {
+        return "test";
     }
 
 }

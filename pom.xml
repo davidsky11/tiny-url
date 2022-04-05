@@ -20,6 +20,7 @@
         <springfox.version>2.9.2</springfox.version>
         <guava.version>30.1-jre</guava.version>
         <jackson.version>2.11.0</jackson.version>
+        <testable.version>0.7.5</testable.version>
     </properties>
 
     <dependencyManagement>
@@ -59,12 +60,6 @@
             <version>${guava.version}</version>
         </dependency>
 
-        <!-- swagger -->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-boot-starter</artifactId>-->
-<!--            <version>${springfox.version}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -89,16 +84,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
-            <version>2.0.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>2.0.0</version>
+            <groupId>com.alibaba.testable</groupId>
+            <artifactId>testable-all</artifactId>
+            <version>${testable.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -118,19 +106,64 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <!--<plugin>
+                <groupId>org.apache.maven.plugin</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <argLine>@{argLine} -javaagent:${settings.localRepository}/com/alibaba/testable/testable-agent/${testable.version}/testable-agent-${testable.version}.jar</argLine>
+                </configuration>
+            </plugin>
+            <!--<plugin>
+                <groupId>com.alibaba.testable</groupId>
+                <artifactId>testable-maven-plugin</artifactId>
+                <version>${testable.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare</id>
+                        <goals>
+                            <goal>prepare</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
+
             <!-- jacoco 单测覆盖率 -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
+                <version>0.8.6</version>
+                <!--<configuration>
+                    &lt;!&ndash;指定生成 .exec 文件的存放位置&ndash;&gt;
+                    <destFile>target/coverage-reports/jacoco-unit.exec</destFile>
+                    &lt;!&ndash;Jacoco 是根据 .exec 文件生成最终的报告，所以需指定 .exec 的存放路径&ndash;&gt;
+                    <dataFile>target/coverage-reports/jacoco-unit.exec</dataFile>
+                </configuration>-->
                 <executions>
                     <execution>
+                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <execution>
+                    <!--<execution>
                         <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>target/jacoco.exec</dataFile>
+                            <outputDirectory>target/jacoco-ut</outputDirectory>
+                        </configuration>
+                    </execution>-->
+                    <execution>
+                        <id>jacoco-site</id>
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
@@ -139,6 +172,7 @@
                 </executions>
             </plugin>
         </plugins>
+
     </build>
 
 </project>

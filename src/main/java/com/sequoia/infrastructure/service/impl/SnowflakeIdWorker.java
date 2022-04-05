@@ -1,6 +1,10 @@
-package com.sequoia.infrastructure.util;
+package com.sequoia.infrastructure.service.impl;
 
+import com.sequoia.service.IIdWorker;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDate;
@@ -8,7 +12,7 @@ import java.time.ZoneId;
 
 /**
  * Descript:
- * File: com.sequoia.infrastructure.util.SnowflakeIdWorker
+ * File: com.sequoia.infrastructure.service.impl.SnowflakeIdWorker
  *  时间戳：TPS很难达到400W，时间戳可降到秒为单位，32位可满足68年需求
  *  机器：未采用容器时机器往往达不到1024台，可用5位(32台)足够。
  *  序列号：16位可到65535，6W/s的TPS已挺高
@@ -18,7 +22,8 @@ import java.time.ZoneId;
  * Copyright (c) 2022,All Rights Reserved.
  */
 @Slf4j
-public class SnowflakeIdWorker {
+@Component("sfIdWorker")
+public class SnowflakeIdWorker implements IIdWorker {
 
     /**
      * 开始时间, 2020-1-1. 时间戳位上并不存储实际的时间, 而是当前时间与开始时间的差值(秒)
@@ -57,18 +62,17 @@ public class SnowflakeIdWorker {
      * 上一次时间戳
      */
     private static long lastTimestamp = -1L;
-    static {
-        initMachineId();
-    }
+
     /**
      * 获取分布式ID
      *
      * @return
      */
-    public static long nextId() {
+    public long nextId() {
         return nextId(getNowSeconds());
     }
-    private static synchronized long nextId(long nowSeconds) {
+
+    private synchronized long nextId(long nowSeconds) {
         long currentTimestamp = nowSeconds;
         // 当前时间异常, 自动校准
         if (currentTimestamp < lastTimestamp) {
@@ -95,9 +99,11 @@ public class SnowflakeIdWorker {
                 | machineId << MACHINE_LEFT
                 | sequence;
     }
-    private static long getNowSeconds() {
+
+    private long getNowSeconds() {
         return System.currentTimeMillis() / 1000;
     }
+
     /**
      * 通过hostname初始化机器ID, 将hostname各字符累加并对machineId最大值取余
      * <p>虚拟主机: 可手工设置, eg:prod1 </p>
@@ -106,10 +112,11 @@ public class SnowflakeIdWorker {
      *
      * @return
      */
-    private static void initMachineId() {
+    @PostConstruct
+    public void initMachineId() {
         try {
             if (!machineInitialized) {
-                String hostname = InetAddress.getLocalHost().getHostName();
+                String hostname = getHostName();
                 char[] hostnameChars = hostname.toCharArray();
                 int sumOfHostname = 0;
                 for (int i = 0, length = hostnameChars.length; i < length; i++) {
@@ -124,12 +131,17 @@ public class SnowflakeIdWorker {
             machineInitialized = true;
         }
     }
+
+    private String getHostName() throws UnknownHostException {
+        return InetAddress.getLocalHost().getHostName();
+    }
+
     /**
      * 覆盖默认machineID
      *
      * @param mid machineId
      */
-    public static void setMachineId(long mid) {
+    public void setMachineId(long mid) {
         if (mid > 0) {
             machineId = mid;
         }

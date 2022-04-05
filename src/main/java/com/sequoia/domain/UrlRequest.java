@@ -8,12 +8,14 @@ import lombok.*;
  * Descript:
  * File: com.sequoia.domain.UrlRequest
  * Author: daishengkai
- * Date: 2022/3/30 19:14
+ * Date: 2022/3/30
  * Copyright (c) 2022,All Rights Reserved.
  */
 @ToString
 @ApiModel("长短链接请求实体")
 public class UrlRequest {
+
+    public UrlRequest() {}
 
     public UrlRequest(String url) {
         this.url = url;
