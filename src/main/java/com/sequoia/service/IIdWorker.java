@@ -8,6 +8,6 @@ package com.sequoia.service;
  */
 public interface IIdWorker {
 
-    long nextId();
+    long nextId(String originUrl);
 
 }

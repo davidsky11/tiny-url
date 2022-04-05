@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +20,7 @@ import java.util.concurrent.locks.Lock;
 
 /**
  * Descript:
- * File: com.sequoia.service.TinyUrlStoreMock
+ * File: com.sequoia.service.TinyUrlStoreTest
  * Author: daishengkai
  * Date: 2022/3/31
  * Copyright (c) 2022,All Rights Reserved.
@@ -28,7 +28,7 @@ import java.util.concurrent.locks.Lock;
 @Slf4j
 @SpringBootTest
 //@RunWith(MockitoJUnitRunner.class)
-public class TinyUrlStoreTest {
+public class TinyUrlStore1Test {
 
     @SpyBean
     private TinyUrlStore tinyUrlStore;
@@ -61,12 +61,12 @@ public class TinyUrlStoreTest {
     }
 
     @Test
-    public void testsaveTinyOriginCodeMapping() throws InvocationTargetException, IllegalAccessException, InterruptedException {
+    public void testSaveTinyOriginCodeMapping1() {
         String originUrl = "test.com";
         Lock lock = Mockito.mock(Lock.class);
         Mockito.when(tinyUrlStore.getLock(Mockito.anyString())).thenReturn(lock);
-        Mockito.when(lock.tryLock(1000, TimeUnit.MILLISECONDS)).thenReturn(false);
         try {
+            Mockito.when(lock.tryLock(1000, TimeUnit.MILLISECONDS)).thenReturn(false);
             String tinyCode = tinyUrlStore.getTinyUrlFuture(originUrl).get();
         } catch (Exception e) {
             log.error("异常", e);
@@ -117,27 +117,27 @@ public class TinyUrlStoreTest {
     @Test
     public void testSaveTinyOriginCodeMapping(){
         String originUrl = "test.com";
-//        Lock lock = Mockito.mock(Lock.class);
-//        Mockito.when(tinyUrlStore.getLock(Mockito.anyString())).thenReturn(lock);
+        Lock lock = Mockito.mock(Lock.class);
+        Mockito.when(tinyUrlStore.getLock(Mockito.anyString())).thenReturn(lock);
+
+        try {
+            Mockito.when(lock.tryLock(1000, TimeUnit.MILLISECONDS)).thenThrow(new InterruptedException());
+            String tinyCode = tinyUrlStore.getTinyUrlFuture(originUrl).get();
+        } catch (Exception e) {
+            log.error("异常", e);
+        }
 //
-//        try {
-//            Mockito.when(lock.tryLock(1000, TimeUnit.MILLISECONDS)).thenThrow(new InterruptedException());
-//            String tinyCode = tinyUrlStore.getTinyUrlFuture(originUrl).get();
-//        } catch (Exception e) {
-//            log.error("异常", e);
-//        }
-//
-//        try {
-//            TinyUrlStore store = new TinyUrlStore();
-//
-//            Method method = TinyUrlStore.class.getDeclaredMethod("saveTinyOriginCodeMapping", String.class, String.class);
-//            method.setAccessible(true);
-//
-//            method.invoke(store, "test", "test");
-//            method.invoke(store, "test", "test");
-//        } catch (Exception e) {
-//            log.error("异常", e);
-//        }
+        try {
+            TinyUrlStore store = new TinyUrlStore();
+
+            Method method = TinyUrlStore.class.getDeclaredMethod("saveTinyOriginCodeMapping", String.class, String.class);
+            method.setAccessible(true);
+
+            method.invoke(store, "test", "test");
+            method.invoke(store, "test", "test");
+        } catch (Exception e) {
+            log.error("异常", e);
+        }
 
         try {
             CodeGenerator codeGenerator = Mockito.mock(CodeGenerator.class);
@@ -145,32 +145,10 @@ public class TinyUrlStoreTest {
                     .thenThrow(new LockException("中断异常"));
 //                    .thenReturn("test");
 
-
             CompletableFuture<String> future = new CompletableFuture<>();
             future.completeExceptionally(new RuntimeException("中断异常"));
 
-//            doAnswer((InvocationOnMock invocation) -> {
-//                ((Runnable)invocation.getArguments()[0]).run();
-//                return null;
-//            });
-
-//            TinyUrlStore store = new TinyUrlStore();
-//            Method method = TinyUrlStore.class.getDeclaredMethod("generateTinyCodeFuture", String.class);
-//            method.setAccessible(true);
-//            CompletableFuture<String> future = new CompletableFuture<>();
-//            future.completeExceptionally(new RuntimeException("中断异常"));
-//            method.invoke(tinyUrlStore, originUrl);
-
             String tinyCode = tinyUrlStore.getTinyUrlFuture(originUrl).get();
-
-//            TinyUrlStore store = new TinyUrlStore();
-//            Method method = TinyUrlStore.class.getDeclaredMethod("putOriginUrl", String.class, String.class);
-//            method.setAccessible(true);
-//            method.invoke(tinyUrlStore, "test", originUrl);
-//
-//            method = TinyUrlStore.class.getDeclaredMethod("generateTinyCodeFuture", String.class);
-//            method.setAccessible(true);
-//            method.invoke(tinyUrlStore, originUrl);
         } catch (Exception e) {
             log.error("异常", e);
         }

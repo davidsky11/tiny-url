@@ -47,12 +47,12 @@ public class TinyUrlStore implements ITinyUrlStore {
     /**
      * 使用 guava loadingCache 缓存 future 方式，来减少客户端并发
      * 作用：
-     * 1、本地缓存，10s过期一次，抵抗刷子流量
+     * 1、本地缓存，30s过期一次，抵抗刷子流量
      * 2、并发请求进来，只有第一个请求会做 生成短链接动作
      */
     private LoadingCache<String, ProducerPromise<String>> TINY_CODE_CACHE =
             CacheBuilder.newBuilder()
-                    .expireAfterWrite(10, TimeUnit.SECONDS)
+                    .expireAfterWrite(30, TimeUnit.SECONDS)
                     .initialCapacity(10240)
                     .concurrencyLevel(CPU_CORE_COUNT)
                     .maximumSize(10240)

@@ -3,9 +3,7 @@ package com.sequoia.app.config;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -14,7 +12,6 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * SwaggerConfig
@@ -43,7 +40,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         return new ApiInfoBuilder()
                 .title("红杉资本-短链接服务接口文档")
                 .description("更多请咨询相关开发者 xxx")
-                .contact(new Contact("kevin", "davidsky11.github.io", "davidsky11@126.com"))
+                .contact(new Contact("davidsky11_github", "davidsky11.github.io", "davidsky11@126.com"))
                 .version("0.0.1")
                 .build();
 

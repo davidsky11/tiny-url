@@ -11,14 +11,14 @@ import java.util.concurrent.Executors;
 
 /**
  * Descript:
- * File: com.sequoia.util.SnowflakeIdWorkerTest
+ * File: com.sequoia.util.SnowflakeIdWorker1Test
  * Author: daishengkai
  * Date: 2022/3/30
  * Copyright (c) 2022,All Rights Reserved.
  */
 @Slf4j
 @SpringBootTest
-public class SnowflakeIdWorkerTest {
+public class SnowflakeIdWorker1Test {
 
     @Resource
     private SnowflakeIdWorker snowflakeIdWorker;
@@ -28,7 +28,7 @@ public class SnowflakeIdWorkerTest {
         log.info("当前时间:{}", System.currentTimeMillis());
         long startTime = System.nanoTime();
         for (int i = 0; i < 50000; i++) {
-            long id = snowflakeIdWorker.nextId();
+            long id = snowflakeIdWorker.nextId(""+i);
             log.info("生成的id: {}", id);
         }
         log.info("生成id耗时: {}", (System.nanoTime()-startTime)/1000000+"ms");
@@ -40,7 +40,7 @@ public class SnowflakeIdWorkerTest {
         long startTime = System.nanoTime();
         snowflakeIdWorker.setMachineId(10001L);
         for (int i = 0; i < 10; i++) {
-            long id = snowflakeIdWorker.nextId();
+            long id = snowflakeIdWorker.nextId(i+"");
             log.info("生成的id: {}", id);
         }
         snowflakeIdWorker.setMachineId(-1L);
@@ -69,7 +69,7 @@ public class SnowflakeIdWorkerTest {
     @Test
     public void testError() {
         try {
-            long id = snowflakeIdWorker.nextId();
+            long id = snowflakeIdWorker.nextId("");
         } catch (Exception e) {
             log.error("异常", e);
         }

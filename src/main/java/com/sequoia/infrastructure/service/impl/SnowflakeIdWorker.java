@@ -1,5 +1,6 @@
 package com.sequoia.infrastructure.service.impl;
 
+import com.sequoia.infrastructure.common.exception.TinyCodeException;
 import com.sequoia.service.IIdWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -68,7 +69,8 @@ public class SnowflakeIdWorker implements IIdWorker {
      *
      * @return
      */
-    public long nextId() {
+    @Override
+    public long nextId(String originUrl) {
         return nextId(getNowSeconds());
     }
 
@@ -125,15 +127,19 @@ public class SnowflakeIdWorker implements IIdWorker {
                 machineId = sumOfHostname % MAX_MACHINE;
                 log.info("====> Init machineId. hostname[" + hostname + "], machineId[" + machineId + "]");
             }
-        } catch (UnknownHostException e) {
+        } catch (Exception e) {
             log.error("====> Init machineId failure", e);
         } finally {
             machineInitialized = true;
         }
     }
 
-    private String getHostName() throws UnknownHostException {
-        return InetAddress.getLocalHost().getHostName();
+    private String getHostName() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            throw new TinyCodeException("unknown host");
+        }
     }
 
     /**

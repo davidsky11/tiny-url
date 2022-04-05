@@ -4,6 +4,9 @@ import com.sequoia.infrastructure.service.impl.CodeGenerator;
 import com.sequoia.util.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.annotation.Resource;
 
 /**
  * Descript:
@@ -13,18 +16,19 @@ import org.junit.jupiter.api.Test;
  * Copyright (c) 2022,All Rights Reserved.
  */
 @Slf4j
+@SpringBootTest
 public class CodeGeneratorTest {
+
+    @Resource
+    private CodeGenerator codeGenerator;
 
     @Test
     public void generateTinyCodeTest() {
-        CodeGenerator codeGenerator = new CodeGenerator();
         log.error(codeGenerator.generateTinyCode(Constant.ORIGIN_URL));
     }
 
     @Test
     public void testGenerateTinyCodeMore() {
-        CodeGenerator codeGenerator = new CodeGenerator();
-
         for (int i = 0; i < 1000; i++) {
             log.error(codeGenerator.generateTinyCode(i+""));
         }
