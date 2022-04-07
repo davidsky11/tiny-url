@@ -16,8 +16,8 @@ import javax.annotation.Resource;
 @Component
 public class CodeGenerator implements ICodeGenerator {
 
-    @Resource
-    private IIdWorker sfIdWorker;
+    @Resource(name = "sfIdWorker")
+    private IIdWorker idWorker;
 
     /**
      * 雪花算法 生成
@@ -28,7 +28,7 @@ public class CodeGenerator implements ICodeGenerator {
     @Override
     public String generateTinyCode(String originUrl) {
         // 控制在 40 位，对应的 62进制数在7位
-        long number = 0xffffffffffL & sfIdWorker.nextId(originUrl);
+        long number = 0xffffffffffL & idWorker.nextId(originUrl);
         String originCode = HexUtil.hex10To62(number);
         // 第一位设置为 校验位
         return HexUtil.getCheckCode(originCode) + originCode;
