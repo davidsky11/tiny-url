@@ -113,10 +113,6 @@
                 </configuration>
             </plugin>
 
-            <!--<plugin>
-                <groupId>org.apache.maven.plugin</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -125,31 +121,12 @@
                     <argLine>@{argLine} -javaagent:${settings.localRepository}/com/alibaba/testable/testable-agent/${testable.version}/testable-agent-${testable.version}.jar</argLine>
                 </configuration>
             </plugin>
-            <!--<plugin>
-                <groupId>com.alibaba.testable</groupId>
-                <artifactId>testable-maven-plugin</artifactId>
-                <version>${testable.version}</version>
-                <executions>
-                    <execution>
-                        <id>prepare</id>
-                        <goals>
-                            <goal>prepare</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>-->
 
             <!-- jacoco 单测覆盖率 -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.6</version>
-                <!--<configuration>
-                    &lt;!&ndash;指定生成 .exec 文件的存放位置&ndash;&gt;
-                    <destFile>target/coverage-reports/jacoco-unit.exec</destFile>
-                    &lt;!&ndash;Jacoco 是根据 .exec 文件生成最终的报告，所以需指定 .exec 的存放路径&ndash;&gt;
-                    <dataFile>target/coverage-reports/jacoco-unit.exec</dataFile>
-                </configuration>-->
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -157,17 +134,6 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <!--<execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>target/jacoco.exec</dataFile>
-                            <outputDirectory>target/jacoco-ut</outputDirectory>
-                        </configuration>
-                    </execution>-->
                     <execution>
                         <id>jacoco-site</id>
                         <phase>test</phase>
