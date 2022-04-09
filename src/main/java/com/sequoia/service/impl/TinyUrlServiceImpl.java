@@ -8,25 +8,24 @@ import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * TinyUrlGenerator
+ * TinyUrlService
  *
  * @author KVLT
  * @date 2022-03-30.
  */
-@Component
-public class TinyUrlService implements ITinyUrlService {
+@Component("tinyUrlService")
+public class TinyUrlServiceImpl implements ITinyUrlService {
 
     @Resource
     private ITinyUrlStore tinyUrlStore;
 
-
     @Override
-    public CompletableFuture<String> getTinyUrl(String originUrl) {
+    public CompletableFuture<String> getTinyUrlFuture(String originUrl) {
         return tinyUrlStore.getTinyUrlFuture(originUrl);
     }
 
     @Override
-    public CompletableFuture<String> getOriginUrl(String tinyCode) {
+    public CompletableFuture<String> getOriginUrlFuture(String tinyCode) {
         return tinyUrlStore.getOriginUrlFuture(tinyCode);
     }
 

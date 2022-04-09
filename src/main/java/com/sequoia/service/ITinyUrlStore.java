@@ -18,6 +18,11 @@ public interface ITinyUrlStore {
      */
     CompletableFuture<String> getTinyUrlFuture(String originUrl);
 
+    /**
+     * 根据短码 获取对应的 长链接
+     * @param tinyUrl
+     * @return
+     */
     CompletableFuture<String> getOriginUrlFuture(String tinyUrl);
 
 }
