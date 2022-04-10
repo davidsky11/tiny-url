@@ -23,6 +23,6 @@ public interface ITinyUrlStore {
      * @param tinyUrl
      * @return
      */
-    CompletableFuture<String> getOriginUrlFuture(String tinyUrl);
+    String getOriginUrl(String tinyUrl);
 
 }

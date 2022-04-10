@@ -48,10 +48,10 @@ public class TinyUrlServiceTest {
 
     @Test
     public void testgetOriginUrlFuture() throws ExecutionException, InterruptedException {
-        String originUrl = tinyUrlService.getOriginUrlFuture(null).get();
+        String originUrl = tinyUrlService.getOriginUrl(null);
 //        Assertions.assertEquals(null, originUrl);
 
-        originUrl = tinyUrlService.getOriginUrlFuture("null").get();
+        originUrl = tinyUrlService.getOriginUrl("null");
         Assertions.assertEquals(null, originUrl);
     }
 

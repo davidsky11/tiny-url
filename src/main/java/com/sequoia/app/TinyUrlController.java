@@ -76,25 +76,14 @@ public class TinyUrlController {
             return ApiResult.error(StatusCodeEnum.PARAM_ERROR, "必须指定短链接地址");
         }
 
-        try {
-            String tinyCode = StringUtils.removeStart(urlRequest.getUrl(), tinyUrlPrefix);
-            if (!isValidTinyCode(tinyCode)) {
-                return ApiResult.error(StatusCodeEnum.PARAM_ERROR,
-                        "短链接不合格, 前缀必须是: " + tinyUrlPrefix
-                                + "短码[" + tinyCode + "]字符范围要在[0-9][a-z][A-Z]内 & 长度要小于等于" + Constant.TINYURL_MAX_LENGTH);
-            }
-
-            return tinyUrlService.getOriginUrlFuture(tinyCode)
-                    .thenApply(ApiResult::ok)
-                    .get(futureTimeoutMills, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e) {
-            log.error("getOriginUrl请求超时, {}", urlRequest, e);
-            return ApiResult.error(StatusCodeEnum.SERVE_TIMEOUT);
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("getOriginUrl请求异常, {}", urlRequest, e);
-            return ApiResult.error(StatusCodeEnum.SERVE_ERROR);
+        String tinyCode = StringUtils.removeStart(urlRequest.getUrl(), tinyUrlPrefix);
+        if (!isValidTinyCode(tinyCode)) {
+            return ApiResult.error(StatusCodeEnum.PARAM_ERROR,
+                    "短链接不合格, 前缀必须是: " + tinyUrlPrefix
+                            + "短码[" + tinyCode + "]字符范围要在[0-9][a-z][A-Z]内 & 长度要小于等于" + Constant.TINYURL_MAX_LENGTH);
         }
 
+        return ApiResult.ok(tinyUrlService.getOriginUrl(tinyCode));
     }
 
     /**

@@ -113,15 +113,11 @@ public class TinyUrlControllerTest {
         Assertions.assertEquals(StatusCodeEnum.PARAM_ERROR.getCode(), result.getCode());
 
         String tinyCode = "sfsfsf";
-        CompletableFuture<String> future = new CompletableFuture();
-        future.completeExceptionally(new InterruptedException());
-        Mockito.when(tinyUrlService.getOriginUrlFuture(tinyCode)).thenReturn(future);
+        Mockito.when(tinyUrlService.getOriginUrl(tinyCode)).thenReturn(tinyCode);
         result = tinyUrlController.getOriginUrl(new UrlRequest(tinyCode));
         Assertions.assertEquals(StatusCodeEnum.SERVE_ERROR.getCode(), result.getCode());
 
-        CompletableFuture<String> future1 = new CompletableFuture();
-        future.completeExceptionally(new TimeoutException());
-        Mockito.when(tinyUrlService.getOriginUrlFuture(tinyCode)).thenReturn(future1);
+        Mockito.when(tinyUrlService.getOriginUrl(tinyCode)).thenReturn(tinyCode);
         result = tinyUrlController.getOriginUrl(new UrlRequest(tinyCode));
         Assertions.assertEquals(StatusCodeEnum.SERVE_TIMEOUT.getCode(), result.getCode());
 

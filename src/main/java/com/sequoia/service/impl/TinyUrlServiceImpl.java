@@ -25,8 +25,8 @@ public class TinyUrlServiceImpl implements ITinyUrlService {
     }
 
     @Override
-    public CompletableFuture<String> getOriginUrlFuture(String tinyCode) {
-        return tinyUrlStore.getOriginUrlFuture(tinyCode);
+    public String getOriginUrl(String tinyCode) {
+        return tinyUrlStore.getOriginUrl(tinyCode);
     }
 
 }

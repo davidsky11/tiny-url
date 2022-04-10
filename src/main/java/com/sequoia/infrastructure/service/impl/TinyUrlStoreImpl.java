@@ -79,11 +79,6 @@ public class TinyUrlStoreImpl implements ITinyUrlStore {
         return true;
     }
 
-    private String getOriginUrl(String tinyCode) {
-        if (null == tinyCode) { return null; }
-        return TINY_ORIGIN_STORE.getIfPresent(tinyCode);
-    }
-
     /**
      * 获取 短码 对应的 锁
      * @param tinyCode 短码
@@ -212,8 +207,9 @@ public class TinyUrlStoreImpl implements ITinyUrlStore {
      * @return 原始长链接
      */
     @Override
-    public CompletableFuture<String> getOriginUrlFuture(String tinyCode) {
-        return CompletableFuture.completedFuture(this.getOriginUrl(tinyCode));
+    public String getOriginUrl(String tinyCode) {
+        if (null == tinyCode) { return null; }
+        return TINY_ORIGIN_STORE.getIfPresent(tinyCode);
     }
 
 }

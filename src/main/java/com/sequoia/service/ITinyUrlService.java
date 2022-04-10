@@ -22,6 +22,6 @@ public interface ITinyUrlService {
       * @param tinyCode 短域名码
       * @return
       */
-     CompletableFuture<String> getOriginUrlFuture(String tinyCode);
+    String getOriginUrl(String tinyCode);
 
 }

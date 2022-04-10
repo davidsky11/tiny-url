@@ -107,10 +107,10 @@ public class TinyUrlStore1Test {
 
     @Test
     public void testgetOriginUrlFuture() throws ExecutionException, InterruptedException {
-        String originUrl = tinyUrlStore.getOriginUrlFuture(null).get();
+        String originUrl = tinyUrlStore.getOriginUrl(null);
         Assertions.assertEquals(null, originUrl);
 
-        originUrl = tinyUrlStore.getOriginUrlFuture("null").get();
+        originUrl = tinyUrlStore.getOriginUrl("null");
         Assertions.assertEquals(null, originUrl);
     }
 

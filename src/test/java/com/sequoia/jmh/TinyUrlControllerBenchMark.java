@@ -26,12 +26,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2022-04-10.
  */
 @BenchmarkMode({Mode.AverageTime, Mode.Throughput})
-//@Warmup(iterations = 1, time = 1)
-//@Measurement(iterations = 5, time = 5)
-//@Threads(4)
-//@Fork(1)
-@State(Scope.Thread)
-@OutputTimeUnit(TimeUnit.SECONDS)
+@Warmup(iterations = 1, time = 1)
+@Measurement(iterations = 5, time = 5)
+@Threads(5)
+@Fork(1)
+@State(Scope.Benchmark)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class TinyUrlControllerBenchMark {
 
     private static final String tinyUrlPrefix = "http://seq.cn/";
@@ -61,18 +61,10 @@ public class TinyUrlControllerBenchMark {
     }
 
     public static void main(String[] args) throws RunnerException {
-//        URLClassLoader classLoader = (URLClassLoader) TinyUrlControllerBenchMark.class.getClassLoader();
-//        StringBuilder classpath = new StringBuilder();
-//        for(URL url : classLoader.getURLs())
-//            classpath.append(url.getPath()).append(File.pathSeparator);
-//        classpath.append("/D:/work/zymespace/benchmark/src/main/resources/").append(File.pathSeparator);
-//        System.out.print(classpath.toString());
-//        System.setProperty("java.class.path", classpath.toString());
-
         Options opt = new OptionsBuilder()
                 .include(TinyUrlControllerBenchMark.class.getName()+".*")
-                .warmupIterations(2)
-                .measurementIterations(5)
+//                .warmupIterations(2)
+//                .measurementIterations(5)
 //                .forks(1)
                 .shouldDoGC(true)
                 .result("result.json")

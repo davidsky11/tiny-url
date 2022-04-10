@@ -126,15 +126,21 @@ http://localhost:8080/swagger-ui.html
 | 场景 | avg(ms)| tp99(ms) |tps | cpu(%) |
 | --- | --- | --- |--- |--- |
 |空方法 |16 | 147 | 5655 |71
-|取短链接(写)| 24 | 315 | 3824 |71
-|取长链接(读) |23 | 313 | 3966 |70
+|取短链接(写)| 29 | 391 | 3824 |71
+|取长链接(读) |34 | 391 | 3966 |70
 
 ![jmeter_thread_group_config](docs/images/jmeter_thread_group_config.png)   
 
 ![jmeter空压测](docs/images/jmeter_null_test.png)   
    
+jmeter写压测   
 ![jmeter写压测_配置](docs/images/jmeter_tiny_url_config.png)   
 
 ![jmeter写压测](docs/images/jmeter_tiny_url.png)    
+
+jmeter读压测
+![jmeter读压测_配置1](docs/images/jmeter_origin_url_config1.png) 
+
+![jmeter读压测_配置2](docs/images/jmeter_origin_url_config2.png) 
 
 ![jmeter读压测](docs/images/jmeter_origin_url.png)   
